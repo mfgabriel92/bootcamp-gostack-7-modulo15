@@ -1,6 +1,7 @@
 import User from '../models/User'
 import File from '../models/File'
 import HTTP from '../../utils/httpResponse'
+import Cache from '../../lib/Cache'
 
 class UserController {
   async store(req, res) {
@@ -14,6 +15,8 @@ class UserController {
     }
 
     user = await User.create(body)
+
+    if (user.provider) await Cache.invalidate('providers')
 
     return res.status(HTTP.CREATED).json({ user })
   }
