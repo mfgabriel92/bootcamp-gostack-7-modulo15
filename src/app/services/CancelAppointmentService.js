@@ -5,6 +5,7 @@ import Queue from '../../lib/Queue'
 import CancelationMail from '../jobs/CancelationMail'
 import HTTP from '../../utils/httpResponse'
 import ErrorMessage from './ErrorMessage'
+import Cache from '../../lib/Cache'
 
 class CancelAppointmentService {
   async run({ id, user_id }) {
@@ -49,6 +50,7 @@ class CancelAppointmentService {
 
     await appointment.save()
     await Queue.createJob(CancelationMail.key, { appointment })
+    await Cache.invalidateByPrefix(`user:${user_id}:appointments`)
 
     return appointment
   }

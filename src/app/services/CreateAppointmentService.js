@@ -12,6 +12,7 @@ import Appointment from '../models/Appointment'
 import Notification from '../schemas/Notification'
 import HTTP from '../../utils/httpResponse'
 import ErrorMessage from './ErrorMessage'
+import Cache from '../../lib/Cache'
 
 class CreateAppointmentService {
   async run({ user_id, provider_id, date }) {
@@ -78,6 +79,8 @@ class CreateAppointmentService {
       )}`,
       user: provider_id,
     })
+
+    await Cache.invalidateByPrefix(`user:${user_id}:appointments`)
 
     return appointment
   }
